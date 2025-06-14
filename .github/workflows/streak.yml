@@ -1,7 +1,8 @@
 name: Streak Maintainer
 on:
   schedule:
-    - cron: '0 23 * * *' # Runs at 11 PM UTC (5 AM +06)
+    - cron: '0 23 * * *' # 11 PM UTC = 5 AM +06
+  workflow_dispatch: # Allows manual runs
 jobs:
   update-streak:
     runs-on: ubuntu-latest
