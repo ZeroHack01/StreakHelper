@@ -1,0 +1,19 @@
+name: Streak Maintainer
+on:
+  schedule:
+    - cron: '0 23 * * *' # Runs at 11 PM UTC (5 AM +06)
+jobs:
+  update-streak:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Update streak log
+        run: |
+          echo "$(date +'%Y-%m-%d'): Streak maintained by ZeroHack01" >> streak-log.md
+          git config --global user.name 'ZeroHack01'
+          git config --global user.email 'mongwoiching2080@gmail.com'
+          git add streak-log.md
+          git commit -m "Auto-update streak log for $(date +'%Y-%m-%d')"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
