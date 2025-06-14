@@ -1,8 +1,14 @@
 name: Streak Maintainer
+
 on:
   schedule:
     - cron: '0 23 * * *' # 11 PM UTC = 5 AM +06
-  workflow_dispatch: # Allows manual runs
+  workflow_dispatch:
+
+permissions:
+  contents: write  # allow commits/pushes
+  actions: write   # allow triggering other workflows (optional)
+
 jobs:
   update-streak:
     runs-on: ubuntu-latest
@@ -14,7 +20,5 @@ jobs:
           git config --global user.name 'ZeroHack01'
           git config --global user.email 'mongwoiching2080@gmail.com'
           git add streak-log.md
-          git commit -m "Auto-update streak log for $(date +'%Y-%m-%d')"
+          git commit -m "Auto-update streak log for $(date +'%Y-%m-%d')" || echo "No changes to commit"
           git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
