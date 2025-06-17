@@ -1,36 +1,20 @@
-name: Streak Maintainer
+name: Daily Streak Maintainer
 
 on:
   schedule:
-    - cron: '0 18 * * *'   # Runs every day at 12:00 AM BD Time (UTC+6)
-  push:
-    branches:
-      - main
+    - cron: '0 12 * * *'  # every day at 12:00 UTC
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
-  update-streak:
+  streak:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
-
-      - name: Set up Git identity
+      - name: Commit streak update
         run: |
-          git config --global user.name 'ZeroHack01'
-          git config --global user.email 'mongwoiching2080@gmail.com'
-
-      - name: Update streak log
-        run: |
-          echo "# Streak Log" > streak-log.md
-          echo "Daily log to maintain GitHub contribution streak for ZeroHack01" >> streak-log.md
-          echo "$(date +'%Y-%m-%d'): Streak maintained by ZeroHack01" >> streak-log.md
-
-      - name: Commit and push
-        run: |
-          git add streak-log.md
-          git commit -m "Auto-update streak log for $(date +'%Y-%m-%d')" || echo "Nothing to commit"
+          echo "$(date '+%Y-%m-%d %H:%M:%S') - keeping the streak alive" >> streak-log.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add streak-log.txt
+          git commit -m "✅ Automated streak update: $(date '+%Y-%m-%d')"
           git push
