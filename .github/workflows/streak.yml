@@ -2,24 +2,24 @@ name: Daily Streak Maintainer
 
 on:
   schedule:
-    - cron: '0 12 * * *'  # run daily at 12pm UTC
+    - cron: '0 4 * * *'  # every day 4AM UTC
   workflow_dispatch:
 
 jobs:
-  streak:
+  update-streak:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Set up user identity
-      run: |
-        git config user.name "ZeroHack01"
-        git config user.email "youremail@github.com"
+      - name: Set commit author to your GitHub identity
+        run: |
+          git config --global user.name "ZeroHack01"
+          git config --global user.email "your_verified_email@users.noreply.github.com"
 
-    - name: Update streak log
-      run: |
-        echo "$(date '+%Y-%m-%d %H:%M:%S') - keeping the streak alive" >> streak-log.txt
-        git add streak-log.txt
-        git commit -m "✅ Streak update: $(date '+%Y-%m-%d')" || echo "No changes to commit"
-        git push
+      - name: Update streak log
+        run: |
+          echo "$(date '+%Y-%m-%d %H:%M:%S') - keeping the streak alive" >> streak-log.md
+          git add streak-log.md
+          git commit -m "✅ Streak update: $(date '+%Y-%m-%d')" || echo "No changes to commit"
+          git push
