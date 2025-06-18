@@ -2,7 +2,7 @@ name: Daily Streak Maintainer
 
 on:
   schedule:
-    - cron: '0 4 * * *'  # Every day at 4 AM UTC
+    - cron: '0 4 * * *' # Runs daily at 4 AM UTC
   workflow_dispatch:
 
 jobs:
@@ -15,15 +15,39 @@ jobs:
       GIT_COMMITTER_EMAIL: mongwoiching2080@gmail.com
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Git identity
+        run: |
+          git config --local user.name "$GIT_AUTHOR_NAME"
+          git config --local user.email "$GIT_AUTHOR_EMAIL"
 
       - name: Update streak log
+        id: streak
         run: |
-          echo "$(date '+%Y-%m-%d %H:%M:%S') - Keeping the streak alive" >> streak-log.md
-          git add streak-log.md
-          if [[ -n "$(git diff --cached --quiet; echo $?)" ]]; then
-            git commit -m "✅ Streak update: $(date '+%Y-%m-%d')"
-            git push
+          DATE=$(date '+%Y-%m-%d')
+          TIME=$(date '+%H:%M:%S')
+
+          if [ ! -s streak-log.md ]; then
+            echo "# 📅 Commit Streak Log" > streak-log.md
+            echo "" >> streak-log.md
+            echo "- $DATE $TIME – Initialized" >> streak-log.md
           else
-            echo "No changes detected. Skipping commit."
+            echo "- $DATE $TIME – Keeping the streak alive 🔥" >> streak-log.md
           fi
+
+          git add streak-log.md
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 78  # Skip commit
+          else
+            git commit -m "✅ Streak update: $DATE"
+            git push
+          fi
+
+      - name: Show status
+        if: always()
+        run: |
+          echo "Workflow finished with status: ${{ job.status }}"
